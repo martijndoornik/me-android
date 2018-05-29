@@ -44,8 +44,8 @@ class IdentityService: EthereumItemService<Identity>() {
     }
 
     companion object {
-        private val PREFERENCE_NAME: String = "currentIdentity"
-        private val PREFERENCE_KEY: String = "id"
+        private const val PREFERENCE_NAME: String = "currentIdentity"
+        private const val PREFERENCE_KEY: String = "id"
 
         var currentIdentity: Identity? = null//Identity("0x7b2afe6d5e16944084eaa292ecaa9c3b6469b445", "Mijn Overheid")
         val currentAddress:String
@@ -110,6 +110,7 @@ class IdentityService: EthereumItemService<Identity>() {
         }
 
         fun setCurrentIdentity(context: Context, identity: Identity) {
+            this.currentIdentity = identity
             val preferences = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE)
             val edit = preferences.edit()
             if (identity.id == null) {

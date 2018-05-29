@@ -9,7 +9,7 @@ import android.widget.Button
 import android.widget.TextView
 import io.forus.me.R
 import io.forus.me.RequestWalletItemActivity
-import io.forus.me.WalletItemActivity
+import io.forus.me.TokenActivity
 import io.forus.me.entities.base.WalletItem
 import io.forus.me.helpers.TransferViewModel
 import io.forus.me.views.base.TitledFragment
@@ -21,7 +21,7 @@ class WalletItemRequestFragment : TitledFragment() {
     var walletItem: WalletItem? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.wallet_item_send_fragment, container, false)
+        val view = inflater.inflate(R.layout.wallet_item_send_dialog, container, false)
         this.amountField = view.findViewById(R.id.amountField)
         this.descriptionField = view.findViewById(R.id.descriptionField)
         val nextButton: Button = view.findViewById(R.id.scanButton)
@@ -39,7 +39,7 @@ class WalletItemRequestFragment : TitledFragment() {
             val json = transfer.toJson().toString()
             val intent = Intent(this.context, RequestWalletItemActivity::class.java)
             intent.putExtra("data", json)
-            startActivityForResult(intent, WalletItemActivity.RETRIEVE_REQUEST)
+            startActivityForResult(intent, TokenActivity.RETRIEVE_REQUEST)
         }
     }
 }

@@ -23,7 +23,6 @@ import io.forus.me.IdentityViewActivity
 import io.forus.me.entities.base.EthereumItem
 import io.forus.me.views.base.TitledFragment
 import kotlinx.android.synthetic.main.me_fragment.*
-import kotlinx.android.synthetic.main.my_qr_view.*
 
 
 /**

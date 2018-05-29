@@ -28,18 +28,18 @@ class WalletListAdapter<T : WalletItem>(private val resourceLayout: Int, private
     @SuppressLint("StaticFieldLeak")
     override fun onBindViewHolder(holder: WalletViewHolder, position: Int) {
         if (holder.nameView != null) {
-            holder.nameView.text = items[position].name
+            holder.nameView.text = items[holder.adapterPosition].name
         }
         if (holder.qrView != null) {
             val onColor = ContextCompat.getColor(holder.itemView.context, R.color.black)
             val offColor = ContextCompat.getColor(holder.itemView.context, R.color.transparent)
             val task = object : AsyncTask<Any?, Any?, Bitmap?>() {
                 override fun doInBackground(vararg params: Any?): Bitmap? {
-                    return if (position < itemCount) {
+                    return if (holder.adapterPosition < itemCount) {
                         QrHelper.getQrBitmap(
                                 listener.requireContext(),
-                                if (items[position] is Token && (items[position] as Token).isEther) "Ether" // TODO Better name
-                                else items[position].address,
+                                if (items[holder.adapterPosition] is Token && (items[holder.adapterPosition] as Token).isEther) "Ether" // TODO Better name
+                                else items[holder.adapterPosition].address,
                                 QrHelper.Sizes.SMALL, onColor, offColor)
                     } else {
                         null

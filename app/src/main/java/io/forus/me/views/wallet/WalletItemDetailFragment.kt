@@ -12,7 +12,7 @@ import io.forus.me.entities.base.WalletItem
 import io.forus.me.helpers.JsonHelper
 import io.forus.me.helpers.QrHelper
 import io.forus.me.views.base.TitledFragment
-import kotlinx.android.synthetic.main.activity_wallet_item.*
+import kotlinx.android.synthetic.main.activity_token.*
 
 /**
  * Created by martijn.doornik on 30/03/2018.

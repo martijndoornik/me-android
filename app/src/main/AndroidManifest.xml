@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="io.forus.me">
 
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
 
@@ -62,7 +62,7 @@
             android:label="@string/title_activity_identity_view"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".WalletItemActivity"
+            android:name=".TokenActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".SendWalletItemActivity"
@@ -72,14 +72,22 @@
             android:name=".RequestWalletItemActivity"
             android:label="@string/title_activity_retrieve_wallet_item"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".QrResultActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
-        <activity android:name=".SendTokenActivity"
+        <activity
+            android:name=".QrResultActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".RecordDetailActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity
+            android:name=".SendTokenActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".RecordDetailActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <service android:name=".services.TokenTransactionWatcher" />
+
+        <activity
+            android:name=".VoucherActivity"
+            android:label="@string/title_activity_voucher"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

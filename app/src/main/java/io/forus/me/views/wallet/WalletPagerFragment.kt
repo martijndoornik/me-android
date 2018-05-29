@@ -5,16 +5,16 @@ import android.os.Bundle
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.helper.ItemTouchHelper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import io.forus.me.R
-import io.forus.me.WalletItemActivity
+import io.forus.me.TokenActivity
+import io.forus.me.VoucherActivity
+import io.forus.me.entities.Token
+import io.forus.me.entities.Voucher
 import io.forus.me.entities.base.WalletItem
 import io.forus.me.services.base.EthereumItemService
-import io.forus.me.views.base.SwipeCallback
 import io.forus.me.views.base.TitledFragment
 
 abstract class WalletPagerFragment<T: WalletItem>(service: EthereumItemService<T>) : TitledFragment() {
@@ -37,8 +37,17 @@ abstract class WalletPagerFragment<T: WalletItem>(service: EthereumItemService<T
     }
 
     fun onItemSelect(selected: T) {
-        val intent = Intent(this.context, WalletItemActivity::class.java)
-        intent.putExtra(WalletItemActivity.RequestCode.WALLET_ITEM_KEY, selected.toJson().toString())
+        val intent = Intent(this.context,
+                when (selected) {
+                    is Token -> TokenActivity::class.java
+                    is Voucher -> VoucherActivity::class.java
+                    else -> throw Exception("Jij wat neger")
+                }
+
+        )
+        intent.putExtra(TokenActivity.RequestCode.TOKEN, selected.toJson().toString())
+        intent.putExtra(VoucherActivity.RequestCode.VOUCHER, selected.toJson().toString())
+        intent.putExtra(TokenActivity.RequestCode.TOKEN, selected.toJson().toString())
         startActivity(intent)
     }
 }

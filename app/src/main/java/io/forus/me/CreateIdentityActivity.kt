@@ -48,6 +48,7 @@ class CreateIdentityActivity : AppCompatActivity() {
         IdentityService.setCurrentIdentity(this, newIdentity)
         val intent = Intent()
         intent.putExtra(Result.IS_FIRST, isFirst)
+        intent.putExtra(Result.NAME, text)
         setResult(ResultCode.CREATED, intent)
         finish()
     }
@@ -78,6 +79,7 @@ class CreateIdentityActivity : AppCompatActivity() {
     class Result {
         companion object {
             const val IS_FIRST = "isFirst"
+            const val NAME = "name"
         }
     }
 

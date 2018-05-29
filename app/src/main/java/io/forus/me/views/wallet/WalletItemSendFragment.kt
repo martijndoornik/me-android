@@ -12,8 +12,6 @@ import android.widget.Button
 import android.widget.TextView
 import io.forus.me.R
 import io.forus.me.SendWalletItemActivity
-import io.forus.me.WalletItemActivity
-import io.forus.me.entities.Asset
 import io.forus.me.entities.Voucher
 import io.forus.me.entities.Token
 import io.forus.me.entities.base.WalletItem
@@ -32,7 +30,7 @@ class WalletItemSendFragment : TitledFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.wallet_item_send_fragment, container, false)
+        val view = inflater.inflate(R.layout.wallet_item_send_dialog, container, false)
         this.amountField = view.findViewById(R.id.amountField)
         this.descriptionField = view.findViewById(R.id.descriptionField)
         val nextButton: Button = view.findViewById(R.id.scanButton)

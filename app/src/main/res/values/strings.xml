@@ -1,6 +1,9 @@
 <resources>
     <string name="accept">Accepteren</string>
+    <string name="account_add">Profiel toevoegen</string>
     <string name="account_qr_info">Dit is het adres van je identiteit. Laat mensen deze scannen als je eigendommen of validaties van deze persoon wil ontvangen.</string>
+    <string name="account_qr_title">Dit is je persoonlijke QR-code</string>
+    <string name="account_switch">Profiel wisselen</string>
     <string name="add">Toevoegen</string>
     <string name="add_identity_help_1">De Me App gebruikt profielen, zodat jij je zaken simpel op orde kan houden. Je kan bijvoorbeeld een profiel puur voor overheidszaken houden, zoals paspoortgegevens. Daarnaast kun je dan een profiel aanmaken die je specifiek gebruikt voor internetaankopen.</string>
     <string name="add_identity_help_2">Profielen schermen ook gegevens af. Een gegeven in een profiel kan niet bekend worden in een ander profiel.</string>
@@ -20,6 +23,7 @@
     <string name="description">Omschrijving</string>
     <string name="description_hint">Omschrijving</string>
     <string name="do_later">Dit wil ik later doen</string>
+    <string name="email_to_me_button">Naar mij emailen</string>
     <string name="history">Geschiedenis</string>
     <string name="i_accept">Dit vind ik goed</string>
     <string name="identity">Profiel</string>
@@ -37,6 +41,7 @@
     <string name="overview">Overzicht</string>
     <string name="passphrase">Wachtwoord</string>
     <string name="passphrase_dont_want">Ik wil geen wachtwoord</string>
+    <string name="qr_code_title">QR-code</string>
     <string name="qr_result_record_category_selection_title">Records worden ingedeeld in categorieën. In welke categorie wil jij dat %s geplaats wordt?</string>
     <string name="record_personal">Persoonlijk</string>
     <string name="record_medical">Medisch</string>
@@ -56,6 +61,7 @@
     <string name="send_button">Scan adres</string>
     <string name="send_wallet_item_title">Overdracht</string>
     <string name="set_at_least_one_delegate">Neem ten minste 1 delegaat om je gegevens terug te halen bij een verloren telefoon.</string>
+    <string name="split_token_button">Opsplitsen</string>
     <string name="sync">Synchroniseren</string>
     <string name="sync_error">Synchronisatiefout</string>
     <string name="syncing">Synchroniseren…</string>
@@ -86,4 +92,5 @@
     <string name="title_activity_identity_view">IdentityViewActivity</string>
     <string name="title_activity_send_wallet_item">SendWalletItemActivity</string>
     <string name="title_activity_retrieve_wallet_item">RetrieveWalletItemActivity</string>
+    <string name="title_activity_voucher">VoucherActivity</string>
 </resources>

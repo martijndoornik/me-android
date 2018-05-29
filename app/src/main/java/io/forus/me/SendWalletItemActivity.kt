@@ -51,18 +51,16 @@ class SendWalletItemActivity : AppCompatActivity(), BarcodeCallback {
             startActivityForResult(intent, RequestCode.EXECUTE_SEND)
         } else {
             // TODO fix this dialog. The green button has gone a little under the screen.
-            val dialog = AlertDialog.Builder(this, R.style.AppTheme_Dialog).create()
-            val listener = object: DialogHelper.OnCloseListener(dialog) {
+            var dialog = DialogHelper.createDialog(this, R.string.invalid_code_title, R.string.invalid_code_description, object: DialogHelper.OnCloseListener() {
                 override fun onClose(dialog: DialogInterface?) {
                     if (dialog != null) {
                         dialog.dismiss()
                         resumeScanner()
                     }
                 }
-            }
-            DialogHelper.stylize(dialog, R.string.invalid_code_title, R.string.invalid_code_description, listener)
-            setOnCloseListener(dialog, listener)
+            })
             dialog.show()
+            DialogHelper.addNegativeButton(dialog, R.string.close)
         }
     }
 

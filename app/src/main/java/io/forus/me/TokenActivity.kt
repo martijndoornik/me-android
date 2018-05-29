@@ -1,37 +1,38 @@
 package io.forus.me
 
+import android.annotation.SuppressLint
 import android.arch.lifecycle.Observer
 import android.content.Intent
+import android.graphics.Bitmap
+import android.os.AsyncTask
 import android.os.Bundle
-import android.os.Handler
-import android.support.design.widget.TabLayout
+import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.MenuItem
 import android.view.View
-import android.widget.ImageView
-import android.widget.PopupMenu
-import android.widget.Toast
+import android.widget.*
 import io.forus.me.entities.Asset
 import io.forus.me.entities.Token
 import io.forus.me.entities.Voucher
 import io.forus.me.entities.base.WalletItem
 import io.forus.me.helpers.JsonHelper
+import io.forus.me.helpers.QrHelper
 import io.forus.me.helpers.ThreadHelper
+import io.forus.me.helpers.TransferViewModel
 import io.forus.me.services.AssetService
 import io.forus.me.services.TokenService
 import io.forus.me.services.VoucherService
-import io.forus.me.views.wallet.*
 import java.util.concurrent.Callable
 
 /**
  * Created by martijn.doornik on 30/03/2018.
  */
-class WalletItemActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickListener {
+class TokenActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickListener {
 
     lateinit var item: WalletItem
-    lateinit var pager: WalletItemDetailPager
-    lateinit var pagerAdapter: TitledFragmentPagerAdapter
+    private lateinit var amountField: TextView
+    private lateinit var descriptionField: TextView
 
     fun goBack(view:View?) {
         finish()
@@ -49,7 +50,6 @@ class WalletItemActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickListene
             SendWalletItemActivity.RequestCode.SEND_REQUEST -> {
                 when (resultCode) {
                     SendWalletItemActivity.ResultCode.SUCCESS_RESULT -> {
-                        this.pager.setCurrentItem(WalletItemDetailPager.OVERVIEW_PAGE, false)
                         val address = intent!!.extras.getString(SendWalletItemActivity.RequestCode.RECIPIENT)
                         val walletItem = JsonHelper.toWalletItem(intent!!.extras.getString(SendWalletItemActivity.RequestCode.TRANSFER_OBJECT))
                         if (walletItem != null) {
@@ -74,10 +74,10 @@ class WalletItemActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickListene
         super.onCreate(savedInstanceState)
         this.setContentView(R.layout.loading)
         try {
-            if (!intent.hasExtra(RequestCode.WALLET_ITEM_KEY)) {
+            if (!intent.hasExtra(RequestCode.TOKEN)) {
                 throw NullPointerException()
             }
-            item = JsonHelper.toWalletItem(intent.getStringExtra(RequestCode.WALLET_ITEM_KEY)) ?: throw NullPointerException()
+            item = JsonHelper.toWalletItem(intent.getStringExtra(RequestCode.TOKEN)) ?: throw NullPointerException()
             ThreadHelper.await(Callable{
                 when (item) {
                     is Asset -> AssetService().getLiveItem(item.address).observe(this, LiveWalletItemObserver<Asset>(this))
@@ -85,7 +85,7 @@ class WalletItemActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickListene
                     is Voucher -> VoucherService().getLiveItem(item.address).observe(this, LiveWalletItemObserver<Voucher>(this))
                 }
             })
-            setContentView(R.layout.activity_wallet_item)
+            setContentView(R.layout.activity_token)
 
             val toolbar: Toolbar = findViewById(R.id.toolbar)
             toolbar.title = item.name
@@ -97,44 +97,65 @@ class WalletItemActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickListene
                 menu.inflate(R.menu.wallet_item_options)
                 menu.show()
             }
+            val qrView:ImageView = findViewById(R.id.qrView)
+            val task = @SuppressLint("StaticFieldLeak")
+            object : AsyncTask<Any?, Any?, Bitmap?>() {
+                override fun doInBackground(vararg params: Any?): Bitmap? {
+                    return QrHelper.getQrBitmap(
+                            baseContext,
+                            JsonHelper.fromWalletItem(item),
+                            QrHelper.Sizes.LARGE,
+                            ContextCompat.getColor(baseContext, R.color.black),
+                            ContextCompat.getColor(baseContext, R.color.transparent))
+                }
 
-            val navigation: TabLayout = findViewById(R.id.navigation)
-            pager = findViewById(R.id.pager)
-            pagerAdapter = TitledFragmentPagerAdapter(supportFragmentManager, listOf(
-                    WalletItemRequestFragment().also {it.title = resources.getString(R.string.request)}.also { it.walletItem = item },
-                    WalletItemDetailFragment().also { it.title = resources.getString(R.string.overview) }.also { it.walletItem = item },
-                    WalletItemSendFragment().also { it.title = resources.getString(R.string.send) }.also { it.walletItem = item }
-            ))
-            pager.adapter = pagerAdapter
-            pager.setCurrentItem(1, false)
-            navigation.setupWithViewPager(pager)
+                override fun onPostExecute(result: Bitmap?) {
+                    super.onPostExecute(result)
+                    if (result != null) {
+                        qrView.setImageBitmap(result)
+                    }
+                }
 
+            }
+            task.execute()
         } catch (e: NullPointerException) {
             setResult(1)
             finish()
         }
     }
-
     override fun onMenuItemClick(item: MenuItem?): Boolean {
-        when (item?.itemId) {
-            R.id.sync -> {
-                this.item.sync()
-            }
-            R.id.delete -> {
-                this.setContentView(R.layout.loading)
-                when(this.item) {
-                    is Asset -> AssetService().delete(this.item as Asset)
-                    is Token -> TokenService().delete(this.item as Token)
-                    is Voucher -> VoucherService().delete(this.item as Voucher)
+        if (item != null) {
+            when (item.itemId) {
+                R.id.sync -> {
+                    this.item.sync()
+                    return true
                 }
-                finish()
+                R.id.delete -> {
+                    when (this.item) {
+                        is Token -> TokenService().delete(this.item as Token)
+                    }
+                    return true
+                }
             }
+
         }
         return false
     }
 
+    private fun onRequestPressed() {
+        if (this::item.isInitialized) {
+            val description = descriptionField.text.toString()
+            val amount = amountField.text.toString().toFloat()
+            val transfer = TransferViewModel(this.item, description, amount)
+            val json = transfer.toJson().toString()
+            val intent = Intent(this, RequestWalletItemActivity::class.java)
+            intent.putExtra("data", json)
+            startActivityForResult(intent, TokenActivity.RETRIEVE_REQUEST)
+        }
+    }
+
     fun onSendCanceled() {
-        (this.pager.getChildAt(WalletItemDetailPager.SEND_PAGE) as WalletItemSendFragment).onCancel()
+     //   (this.pager.getChildAt(WalletItemDetailPager.SEND_PAGE) as WalletItemSendFragment).onCancel()
 
     }
 
@@ -147,7 +168,16 @@ class WalletItemActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickListene
 
     }
 
-    private inner class LiveWalletItemObserver<ITEM: WalletItem>(private val listener: WalletItemActivity): Observer<ITEM> {
+    private fun setupDetailFragment() {
+        this.amountField = findViewById(R.id.amountField)
+        this.descriptionField = findViewById(R.id.descriptionField)
+        val nextButton: Button = findViewById(R.id.scanButton)
+        nextButton.setOnClickListener({
+            onRequestPressed()
+        })
+    }
+
+    private inner class LiveWalletItemObserver<ITEM: WalletItem>(private val listener: TokenActivity): Observer<ITEM> {
         override fun onChanged(t: ITEM?) {
             if (t != null) {
                 listener.onChange(t)
@@ -162,7 +192,7 @@ class WalletItemActivity : AppCompatActivity(), PopupMenu.OnMenuItemClickListene
 
     class RequestCode {
         companion object {
-            const val WALLET_ITEM_KEY = "walletItem"
+            const val TOKEN = "walletItem"
         }
     }
 }
